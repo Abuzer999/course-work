@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Хэшируем пароль
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hashSync(password, 10);
 
     // Создаем пользователя
     const user = await prisma.user.create({

@@ -34,6 +34,7 @@
 
 <script setup lang="ts">
 import { loginSchema } from "~/validation/loginSchema";
+const isLoggin = ref<boolean>(false);
 
 const emit = defineEmits<{
   (event: "toggleLogin"): void;
@@ -53,5 +54,29 @@ const [passwordLogin, passwordLoginAttrs] = defineField("password", {
   validateOnModelUpdate: false,
 });
 
-const SignIn = handleSubmit(async (values) => {});
+const SignIn = handleSubmit(async (values) => {
+  if (isLoggin.value) return;
+  isLoggin.value = true;
+  try {
+    const { email, password } = values;
+
+    const response = await $fetch("/api/auth/login", {
+      method: "POST",
+      body: {
+        email,
+        password,
+      },
+    });
+
+
+    console.log(response);
+    router.push("/");
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  } finally {
+    isLoggin.value = false;
+  }
+});
 </script>

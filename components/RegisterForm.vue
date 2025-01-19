@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import { registerSchema } from "~/validation/registerSchema";
-
+const isSubmitting = ref(false);
 const router = useRouter();
 
 const emit = defineEmits<{
@@ -73,16 +73,15 @@ const [password, passwordAttrs] = defineField("password");
 const [confirmPassword, confirmPasswordAttrs] = defineField("confirmPassword");
 
 const onSumbit = handleSubmit(async (values) => {
-  const formData = {
-    name: values.name,
-    email: values.email,
-    password: values.password,
-  };
+  if(isSubmitting.value) return;
+  isSubmitting.value = true;
 
   try {
+    const { name, email, password } = values;
+
     const response = await $fetch("/api/auth/register", {
       method: "POST",
-      body: formData,
+      body: { name, email, password },
     });
 
     console.log(response);
@@ -90,6 +89,8 @@ const onSumbit = handleSubmit(async (values) => {
     if (error instanceof Error) {
       console.error(error.message);
     }
+  }finally {
+    isSubmitting.value = false;
   }
 });
 </script>
