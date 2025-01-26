@@ -1,9 +1,11 @@
 <template>
-  <header>
-    <h1>Header Default</h1>
-  </header>
+  <div class="wrapper">
+    <header>
+      <headerContent />
+    </header>
 
-  <main>
-    <slot />
-  </main>
+    <main>
+      <slot />
+    </main>
+  </div>
 </template>

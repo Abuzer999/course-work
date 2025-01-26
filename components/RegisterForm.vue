@@ -48,7 +48,7 @@
       />
     </div>
 
-    <span class="text-[green]">{{ successMessage }}</span>
+    <span class="text-[green] mt-[10px] text-center">{{ successMessage }}</span>
   </form>
 </template>
 
@@ -63,7 +63,7 @@ const emit = defineEmits<{
 
 const successMessage = ref<string>("");
 
-const { errors, defineField, handleSubmit } = useForm({
+const { resetForm, errors, defineField, handleSubmit } = useForm({
   validationSchema: registerSchema,
 });
 
@@ -73,7 +73,7 @@ const [password, passwordAttrs] = defineField("password");
 const [confirmPassword, confirmPasswordAttrs] = defineField("confirmPassword");
 
 const onSumbit = handleSubmit(async (values) => {
-  if(isSubmitting.value) return;
+  if (isSubmitting.value) return;
   isSubmitting.value = true;
 
   try {
@@ -83,8 +83,9 @@ const onSumbit = handleSubmit(async (values) => {
       method: "POST",
       body: { name, email, password },
     });
-
     console.log(response);
+    resetForm();
+    successMessage.value = 'User successfully registered';
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);

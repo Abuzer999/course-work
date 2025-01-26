@@ -12,6 +12,9 @@ export default defineNuxtConfig({
     "@vee-validate/nuxt",
     "@nuxt/icon",
   ],
+  runtimeConfig: {
+    JWT_SECRET: process.env.JWT_SECRET,
+  },
   tailwindcss: {
     cssPath: "~/assets/css/tailwind.css",
   },

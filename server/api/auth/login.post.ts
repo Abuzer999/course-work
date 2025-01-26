@@ -39,14 +39,15 @@ export default defineEventHandler(async (event) => {
         }
 
         const token = jwt.sign(
-            { id: user.id, email }, 
-            process.env.JWT_SECRET!, 
-            { expiresIn: '1h' }
+            { id: user.id, role: user.role, email: user.email }, 
+            useRuntimeConfig().JWT_SECRET, 
+            { expiresIn: '30d' }
         );
 
+        event.node.res.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Secure; Path=/; Max-Age=30 * 24 * 60 * 60`);
+
         return {
-            message: 'Login successful!',
-            token,
+            statusMessage: 'Login successful!',
         };
     } catch (error: any) {
         console.error('Login error:', error);

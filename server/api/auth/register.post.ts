@@ -3,13 +3,12 @@ import prisma from '~/lib/prisma';
 
 export default defineEventHandler(async (event) => {
   try {
-    const body = await readBody(event); // Получаем данные из тела запроса
-    const { name, email, password } = body;
+    const { name, email, password } = await readBody(event);  // Получаем данные из тела запроса
 
     if (!name || !email || !password) {
       throw createError({
         statusCode: 400,
-        message: 'Name, email, and password are required.',
+        statusMessage: 'Name, email, and password are required.',           
       });
     }
 

@@ -7,7 +7,7 @@ const toggleLogin = () => {
 </script>
 
 <template>
-    <div>
+    <div class="flex flex-col justify-center items-center">
         <RegisterForm v-if="isLogin" @toggleLogin="toggleLogin" />
         <LoginForm v-else @toggleLogin="toggleLogin"/>
     </div>
