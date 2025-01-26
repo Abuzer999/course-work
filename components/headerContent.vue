@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="flex justify-between items-center py-[10px]">
-      <span class="text-[30px] font-[700]">SportTime</span>
+      <NuxtLink to='/' class="text-[30px] font-[700]">SportTime</NuxtLink>
 
       <nav>
         <ul class="flex gap-[20px]">
