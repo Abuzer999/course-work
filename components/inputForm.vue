@@ -7,7 +7,7 @@
       <input
         :type="type"
         :placeholder="placeholder"
-        :value="modelValue"
+        :value="modelValue || ''"
         @input="handleInput"
         class="w-[300px] font-weight-[400] text-[17px] line-height-[137%] placeholder:text-[#a6a6a7]"
       />

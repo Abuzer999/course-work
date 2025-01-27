@@ -18,11 +18,11 @@
 const links = [
   {
     name: "Shop",
-    href: "/shop",
+    href: "/",
   },
   {
     name: "Trend",
-    href: "/trend",
+    href: "/",
   },
   {
     name: "Profile",
