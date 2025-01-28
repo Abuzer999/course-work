@@ -44,9 +44,16 @@ export default defineEventHandler(async (event) => {
             { expiresIn: '30d' }
         );
 
-        event.node.res.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Secure; Path=/; Max-Age=30 * 24 * 60 * 60`);
+        const session = await setUserSession(event, {
+            user: {
+                ...user
+            },
+            createdAt: Date.now(),
+        });
+
 
         return {
+            session,
             statusMessage: 'Login successful!',
         };
     } catch (error: any) {

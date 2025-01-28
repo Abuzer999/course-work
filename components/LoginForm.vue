@@ -36,6 +36,8 @@
 import { loginSchema } from "~/validation/loginSchema";
 const isLoggin = ref<boolean>(false);
 
+const {fetch} = useUserSession();
+
 const emit = defineEmits<{
   (event: "toggleLogin"): void;
 }>();
@@ -62,14 +64,14 @@ const SignIn = handleSubmit(async (values) => {
 
     const response = await $fetch("/api/auth/login", {
       method: "POST",
-      body: {
-        email,
-        password,
-      },
+      body: { email, password },
     });
 
+    await fetch();
     console.log(response);
     router.push("/");
+
+    
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);

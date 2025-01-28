@@ -3,7 +3,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
   modules: [
-    "@pinia/nuxt",
+    ["@pinia/nuxt", { disableVuex: false }],
     "@nuxt/fonts",
     "@nuxtjs/tailwindcss",
     "@nuxt/image",
@@ -11,10 +11,12 @@ export default defineNuxtConfig({
     "@prisma/nuxt",
     "@vee-validate/nuxt",
     "@nuxt/icon",
+    "nuxt-auth-utils",
   ],
   runtimeConfig: {
     JWT_SECRET: process.env.JWT_SECRET,
   },
+  ssr: false,
   tailwindcss: {
     cssPath: "~/assets/css/tailwind.css",
   },
@@ -37,6 +39,7 @@ export default defineNuxtConfig({
   },
   pinia: {
     storesDirs: ["./stores/**", "./custom-folder/stores/**"],
+    autoImports: ["defineStore"],
   },
   veeValidate: {
     autoImports: true,

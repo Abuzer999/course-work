@@ -34,6 +34,9 @@
 </template>
 
 <script setup lang="ts">
+const router = useRouter();
+const { clear } = useUserSession();
+
 interface IUser {
   name: string;
   email: string;
@@ -64,19 +67,12 @@ const dataUser = ref<IUser>({
 //   }
 // };
 
+
 const logout = async () => {
-  try {
-    const response = await $fetch("/api/auth/logout", {
-      method: "POST",
-    });
-    console.log(response);
-    useRouter().push("/auth");
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Logout error:", error);
-    }
-  }
-};
+  await clear();
+  router.push('/auth')
+}
+
 
 // onMounted(getProfile);
 </script>
