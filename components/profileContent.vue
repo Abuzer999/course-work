@@ -34,15 +34,10 @@
 </template>
 
 <script setup lang="ts">
+import type { IUser } from "~/types/user";
 const router = useRouter();
 const { clear } = useUserSession();
 
-interface IUser {
-  name: string;
-  email: string;
-  age: number | null;
-  gender: string | null;
-}
 
 const dataUser = ref<IUser>({
   name: "",
@@ -53,26 +48,29 @@ const dataUser = ref<IUser>({
 
 // const getProfile = async () => {
 //   try {
-//     const data = await $fetch<{ body: IUser }>("/api/profile/info", {
-//       method: "GET",
-//     });
+//     const { data, error } = await useFetch<{ user: IUser }>("/api/profile/user");
 
-//     dataUser.value = data.body;
+//     if (error.value) {
+//       console.error("Ошибка при загрузке профиля:", error.value);
+//       return;
+//     }
 
-//     console.log(data);
+//     console.log(data.value);
+
+//     if (data.value?.user) {
+//       dataUser.value = data.value.user;
+//     }
 //   } catch (error: unknown) {
 //     if (error instanceof Error) {
-//       console.error("Get profile error:", error);
+//       console.error("Get profile error:", error.message);
 //     }
 //   }
 // };
 
-
 const logout = async () => {
   await clear();
-  router.push('/auth')
-}
-
+  router.push("/auth");
+};
 
 // onMounted(getProfile);
 </script>
