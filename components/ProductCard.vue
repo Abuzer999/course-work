@@ -14,18 +14,25 @@
 import type { IProduct } from '~/types/product';
 
 const props = defineProps<IProduct>();
-const user = ref<string>('')
+
+const { user } = useUserSession();
+
+const userId = computed(() => user.value);
 
 const addToBasket = async() => {
     try {
         const data = await $fetch('/api/basket/addProduct', {
             method: 'POST',
             body: {
-                userId: user.value,
+                userId: userId,
                 productId: props.id,
                 quantity: 1,
             }
         })
+
+        if (!data) {
+            throw new Error("Failed to add product to basket");
+        }
 
     } catch(error: unknown) {
         if (error instanceof Error) {

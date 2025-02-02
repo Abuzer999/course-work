@@ -54,6 +54,7 @@ export default defineEventHandler(async (event) => {
         role: user.role,
         email: user.email,
       },
+      maxAge: 60 * 60 * 24 * 7,
       createdAt: Date.now(),
     });
 

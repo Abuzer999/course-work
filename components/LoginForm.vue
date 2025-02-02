@@ -36,13 +36,12 @@
 import { loginSchema } from "~/validation/loginSchema";
 const isLoggin = ref<boolean>(false);
 
-const {fetch} = useUserSession();
+const { fetch } = useUserSession();
 
 const emit = defineEmits<{
   (event: "toggleLogin"): void;
 }>();
 
-const router = useRouter();
 const successMessage = ref<string>("");
 
 const { errors, defineField, handleSubmit } = useForm({
@@ -67,11 +66,13 @@ const SignIn = handleSubmit(async (values) => {
       body: { email, password },
     });
 
+    if (!response) {
+      throw new Error("Failed to login");
+    }
+
     await fetch();
     console.log(response);
-    router.push("/");
-
-    
+    navigateTo("/");
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);
