@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Products</h1>
-
+    
     <ProductCard
       v-for="product in products"
       :key="product.id"
@@ -34,27 +34,20 @@ const offset = ref<number>(1);
 const totalProducts = ref<number>(0);
 
 
-//fix this
-
 const getListProducts = async () => {
   try {
     const cacheKey = `products-${limit.value}-${offset.value}`;
     const skip = (offset.value - 1) * limit.value;
 
-    const { data: dataProducts, refresh } = await useAsyncData(
-      cacheKey,
-      () =>
-        $fetch(`/api/products/products?limit=${limit.value}&offset=${skip}`),
+    const { data: dataProducts, refresh } = await useAsyncData(cacheKey, () =>
+      $fetch(`/api/products/products?limit=${limit.value}&offset=${skip}`), 
       {
         getCachedData: (key) => {
-          const cachedData =
-            nuxtApp.payload.data[key] || nuxtApp.static.data[key];
+          const cachedData = nuxtApp.payload.data[key] || nuxtApp.static.data[key];
           if (cachedData) {
             console.log(`✅ Данные загружены из кэша для ключа: ${key}`);
           } else {
-            console.log(
-              `❌ Кэш не найден для ключа: ${key}, выполняется новый запрос...`
-            );
+            console.log(`❌ Кэш не найден для ключа: ${key}, выполняется новый запрос...`);
           }
           return cachedData;
         },
@@ -64,6 +57,7 @@ const getListProducts = async () => {
     if (dataProducts.value) {
       products.value = dataProducts.value.products;
       totalProducts.value = dataProducts.value.totalProducts;
+      console.log(products.value.length);
     } else {
       await refresh(); // В случае, если данные не загрузились из кэша
     }
@@ -73,6 +67,8 @@ const getListProducts = async () => {
     }
   }
 };
+
+
 
 watch([limit, offset], getListProducts, { immediate: true });
 </script>
