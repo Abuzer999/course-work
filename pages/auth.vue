@@ -7,4 +7,4 @@
         layout: "custom",
         middleware: ["auth"],
     })
-</script>
+</script> 

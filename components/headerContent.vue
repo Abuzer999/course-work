@@ -27,7 +27,7 @@
 const links = [
   {
     name: "Shop",
-    href: "/",
+    href: "/products",
   },
   {
     name: "Trend",

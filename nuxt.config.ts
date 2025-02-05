@@ -1,9 +1,8 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
   modules: [
-    ["@pinia/nuxt", { disableVuex: false }],
+    ["@pinia/nuxt", { autoImports: ["defineStore"] }],
     "@nuxt/fonts",
     "@nuxtjs/tailwindcss",
     "@nuxt/image",
@@ -16,7 +15,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     JWT_SECRET: process.env.JWT_SECRET,
   },
-
 
   ssr: false,
   tailwindcss: {
@@ -41,7 +39,6 @@ export default defineNuxtConfig({
   },
   pinia: {
     storesDirs: ["./stores/**", "./custom-folder/stores/**"],
-    autoImports: ["defineStore"],
   },
   veeValidate: {
     autoImports: true,

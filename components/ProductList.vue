@@ -1,9 +1,8 @@
 <template>
   <div>
     <h1>Products</h1>
-    <div v-if="products && products.length === 0">No products available</div>
+
     <ProductCard
-      v-else
       v-for="product in products"
       :key="product.id"
       :id="product.id"
@@ -14,7 +13,9 @@
     />
 
     <div class="pagination">
-      <button :disabled="offset <= 1" @click="offset -= 1">Предыдущая {{ offset }}</button>
+      <button :disabled="offset <= 1" @click="offset -= 1">
+        Предыдущая {{ offset }}
+      </button>
 
       <button :disabled="offset * limit >= totalProducts" @click="offset += 1">
         Следующая
@@ -25,21 +26,50 @@
 
 <script setup lang="ts">
 import type { IProduct } from "~/types/product";
+
+const nuxtApp = useNuxtApp();
 const products = ref<IProduct[]>([]);
-const limit = ref(10);
-const offset = ref(1);
-const totalProducts = ref(0);
+const limit = ref<number>(10);
+const offset = ref<number>(1);
+const totalProducts = ref<number>(0);
+
+
+//fix this
 
 const getListProducts = async () => {
   try {
+    const cacheKey = `products-${limit.value}-${offset.value}`;
     const skip = (offset.value - 1) * limit.value;
-    const data: { products: IProduct[]; totalProducts: number } = await $fetch(`/api/products/product?limit=${limit.value}&offset=${skip}`);
-    products.value = data.products;
-    totalProducts.value = data.totalProducts;
-    console.log(data);
+
+    const { data: dataProducts, refresh } = await useAsyncData(
+      cacheKey,
+      () =>
+        $fetch(`/api/products/products?limit=${limit.value}&offset=${skip}`),
+      {
+        getCachedData: (key) => {
+          const cachedData =
+            nuxtApp.payload.data[key] || nuxtApp.static.data[key];
+          if (cachedData) {
+            console.log(`✅ Данные загружены из кэша для ключа: ${key}`);
+          } else {
+            console.log(
+              `❌ Кэш не найден для ключа: ${key}, выполняется новый запрос...`
+            );
+          }
+          return cachedData;
+        },
+      }
+    );
+
+    if (dataProducts.value) {
+      products.value = dataProducts.value.products;
+      totalProducts.value = dataProducts.value.totalProducts;
+    } else {
+      await refresh(); // В случае, если данные не загрузились из кэша
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Ошибка получения товаров:", error);
+      console.error("Ошибка получения товаров:", error.message);
     }
   }
 };
