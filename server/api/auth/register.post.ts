@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Хэшируем пароль
-    const hashedPassword = await bcrypt.hashSync(password, 10);
+    const hashedPassword = bcrypt.hashSync(password, 10);
 
     // Создаем пользователя
     const user = await prisma.user.create({
@@ -46,8 +46,8 @@ export default defineEventHandler(async (event) => {
     };
   } catch (error: any) {
     return {
-      statusCode: error.statusCode || 500,
-      message: error.message || 'An error occurred.',
+      statusCode: error.statusCode,
+      message: error.message,
     };
   }
 });

@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-[5px]">
     <div
-      class="flex items-center justify-between w-[384px] px-[16px] py-[12px] border-[1px] border-solid border-[#e4e4e4] rounded-[10px]"
+      class="flex items-center justify-between w-[384px] px-[16px] py-[12px] border-[1px] bg-[#ffffff] border-solid border-[#e4e4e4] rounded-[10px]"
       :class="{ 'border-[#ff0000]': errorValue }"
     >
       <input

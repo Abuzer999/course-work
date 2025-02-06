@@ -1,9 +1,5 @@
 <template>
-  <Loader
-    v-if="isLoading"
-    class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex min-h-screen flex-col items-center justify-center"
-  />
-  <div v-else>
+  <div>
     <h1>{{ product?.name }}</h1>
     <p>{{ product?.description }}</p>
     <p>Price: ${{ product?.price }}</p>
@@ -25,7 +21,6 @@ const {
   data: productData,
   error,
   refresh,
-  pending: isLoading,
 
 } = await useFetch<IProduct>(`/api/products/${productId}`, {
   key: cacheKey,
@@ -54,7 +49,7 @@ const getProduct = async () => {
     } else {
       await refresh();
     }
-  } catch (error: unknown) {
+  } catch (error: unknown) {  
     if (error instanceof Error) {
       console.error(error.message);
     }

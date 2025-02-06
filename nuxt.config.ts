@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
-  devtools: { enabled: false },
+  devtools: { enabled: true },
   modules: [
     ["@pinia/nuxt", { autoImports: ["defineStore"] }],
     "@nuxt/fonts",
