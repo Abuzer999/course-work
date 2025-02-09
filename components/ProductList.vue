@@ -39,7 +39,7 @@ const getListProducts = async () => {
     const cacheKey = `products-${limit.value}-${offset.value}`;
     const skip = (offset.value - 1) * limit.value;
 
-    const { data: dataProducts, refresh } = await useAsyncData(cacheKey, () =>
+    const { data: dataProducts, refresh } = await useLazyAsyncData(cacheKey, () =>
       $fetch(`/api/products/products?limit=${limit.value}&offset=${skip}`), 
       {
         getCachedData: (key) => {

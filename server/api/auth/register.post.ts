@@ -36,13 +36,24 @@ export default defineEventHandler(async (event) => {
       },
     });
 
+    const basket = await prisma.basket.create({
+      data: {
+        userId: user.id,
+      },
+    });
+
     return {
       message: 'User registered successfully!',
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
-      }, // Возвращаем только безопасные данные
+      }, 
+      basket: {
+        id: basket.id,
+        userId: basket.userId,
+        items: [],
+      }
     };
   } catch (error: any) {
     return {

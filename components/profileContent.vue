@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form>
+    <form @submit.prevent>
       <div>
         <label for="name">Name</label>
         <input v-model="dataUser.name" id="name" type="text" />
@@ -17,7 +17,7 @@
         <label for="gender">gender</label>
         <input v-model="dataUser.gender" id="gender" type="number" />
       </div>
-      <button type="submit">Save</button>
+      <button @click="saveEdit">Save</button>
     </form>
 
     <button
@@ -36,41 +36,55 @@
 <script setup lang="ts">
 import type { IUser } from "~/types/user";
 const router = useRouter();
-const { clear } = useUserSession();
-
+const { clear, user } = useUserSession();
 
 const dataUser = ref<IUser>({
   name: "",
   email: "",
-  age: null,
-  gender: null,
+  age: '',
+  gender: '',
 });
 
-// const getProfile = async () => {
-//   try {
-//     const { data, error } = await useFetch<{ user: IUser }>("/api/profile/user");
+const { data, error } = await useFetch<IUser>("/api/profile/user");
 
-//     if (error.value) {
-//       console.error("Ошибка при загрузке профиля:", error.value);
-//       return;
-//     }
 
-//     console.log(data.value);
+const saveEdit = async (): Promise<void> => {
+  try {
+    const response: IUser = await $fetch("/api/profile/userEdit", {
+      method: "PUT",
+      body: dataUser.value,
+    })
+    console.log(response);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Get profile error:", error.message);
+    }
+  }
+}
 
-//     if (data.value?.user) {
-//       dataUser.value = data.value.user;
-//     }
-//   } catch (error: unknown) {
-//     if (error instanceof Error) {
-//       console.error("Get profile error:", error.message);
-//     }
-//   }
-// };
 
-const logout = async () => {
+const getInfoProfile = async (): Promise<void> => {
+  try {
+    if (error.value) {
+      console.error("Get profile error:", error.value.message);
+    }
+
+    console.log(data.value);
+
+    if (data.value) {
+      dataUser.value = data.value;
+    }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Get profile error:", error.message);
+    }
+  }
+};
+
+const logout = async (): Promise<void> => {
   await clear();
   router.push("/auth");
 };
 
-// onMounted(getProfile);
+onMounted(getInfoProfile);
 </script>

@@ -1,39 +1,54 @@
 import prisma from "~/lib/prisma";
-import { IUser } from "~/types/user";
+import type { UserSession } from "#auth-utils";
 
-export default defineEventHandler(
-  async (event) => {
-    try {
-      const body = await readBody(event);
 
-      const session = await getUserSession(event);
+export default defineEventHandler(async (event) => {
+  try {
+    const session: UserSession = await getUserSession(event);
 
-      if (!session || !session.user) {
-        throw createError({
-          statusCode: 401,
-          statusMessage: "Пользователь не авторизован",
-        });
-      }
-
-      const userId = session.user.;
-
-      const user = await prisma.user.findUnique({
-        where: {
-          id: userId,
-        },
+    if (!session) {
+      throw createError({
+        statusCode: 401,
+        message: "Unauthorized",
       });
-
-      if (!user) {
-        throw createError({
-          statusCode: 404,
-          statusMessage: "Пользователь не найден",
-        });
-      }
-
-      return user;
-    }catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Get profile error:", error.message);
     }
+
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      throw createError({
+        statusCode: 400,
+        message: "User ID is required.",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        name: true,
+        email: true,
+        age: true,
+        gender: true,
+      },
+    });
+
+    if (!user) {
+      throw createError({
+        statusCode: 404,
+        message: "User not found.",
+      });
+    }
+
+
+    return user;
+
+  } catch (error: any) {
+    console.error("Ошибка получения профиля:", error);
+    throw createError({
+      statusCode: error.statusCode,
+      message: "Не удалось получить профиль.",
+    });
   }
-);
+});
