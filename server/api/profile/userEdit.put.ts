@@ -4,10 +4,8 @@ import type { IUser } from "~/types/user";
 
 export default defineEventHandler(async (event) => {
   try {
-    // Получаем сессию пользователя
     const session: UserSession = await getUserSession(event);
 
-    // Если сессии нет, выбрасываем ошибку
     if (!session?.user) {
       throw createError({
         statusCode: 401,
@@ -17,21 +15,17 @@ export default defineEventHandler(async (event) => {
 
     const userId = session.user.id;
 
-    // Если ID пользователя нет, выбрасываем ошибку
     if (!userId) {
       throw createError({
         statusCode: 400,
         message: "User ID is required.",
       });
     }
-
-    // Получаем данные пользователя
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { name: true, email: true, age: true, gender: true },
     });
 
-    // Если пользователь не найден, выбрасываем ошибку
     if (!user) {
       throw createError({
         statusCode: 404,
@@ -39,25 +33,65 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    // Извлекаем данные из тела запроса для редактирования
-    const body: IUser = await readBody(event); // Получаем данные, которые хотим обновить
+    const body: IUser = await readBody(event);
 
-    // Здесь можно сделать проверку, чтобы обновить только те поля, которые переданы в запросе
+    switch (true) {
+      case body.name === user.name &&
+        body.email === user.email &&
+        body.age === user.age &&
+        body.gender === user.gender:
+        throw createError({ statusCode: 400, message: "No changes detected." });
+
+      case !body.name || body.name.trim().length < 2:
+        throw createError({
+          statusCode: 400,
+          message: "Name must be at least 1 character long.",
+        });
+
+      case !body.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email):
+        throw createError({
+          statusCode: 400,
+          message: "Invalid email format.",
+        });
+
+      case !body.age || isNaN(body.age) || (body.age < 10 && body.age > 100):
+        throw createError({
+          statusCode: 400,
+          message: "Age must be a valid positive number between 10 and 100.",
+        });
+
+      case !["male", "female"].includes(body.gender as string):
+        throw createError({
+          statusCode: 400,
+          message: "Gender must be either 'male' or 'female'.",
+        });
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      select: { name: true, email: true, age: true, gender: true, updatedAt: true },
+      select: {
+        name: true,
+        email: true,
+        age: true,
+        gender: true,
+        updatedAt: true,
+      },
       data: {
-        // Обновляем только те поля, которые переданы в запросе
-        name: body.name || user.name,
-        email: body.email || user.email,
-        age: body.age || user.age,
-        gender: body.gender || user.gender,
+        name: body.name ?? undefined,
+        email: body.email ?? undefined,
+        age: body.age ?? undefined,
+        gender: body.gender ?? undefined,
       },
     });
 
-    // Возвращаем обновленные данные пользователя
-    return updatedUser;
+    if (!updatedUser) {
+      throw createError({
+        statusCode: 404,
+        message: "User not found.",
+      });
+    }
 
+    return updatedUser;
   } catch (error: any) {
     console.error("Ошибка обновления профиля:", error);
     throw createError({

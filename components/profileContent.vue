@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form @submit.prevent>
+    <form>
       <div>
         <label for="name">Name</label>
         <input v-model="dataUser.name" id="name" type="text" />
@@ -14,10 +14,23 @@
         <input v-model="dataUser.age" id="age" type="number" />
       </div>
       <div>
-        <label for="gender">gender</label>
-        <input v-model="dataUser.gender" id="gender" type="number" />
+        <label>Gender:</label>
+        <div>
+          <label for="male">Male</label>
+          <input v-model="dataUser.gender" id="male" type="radio" value="male" />
+        </div>
+        <div>
+          <label for="female">Female</label>
+          <input v-model="dataUser.gender" id="female" type="radio" value="female" />
+        </div>
       </div>
-      <button @click="saveEdit">Save</button>
+      <button
+        class="mb-[40px] flex items-center gap-[10px] px-[12px] py-[10px] bg-[#8e8ef3] rounded-[10px]"
+        @click="saveEdit"
+        type="button"
+      >
+        Save
+      </button>
     </form>
 
     <button
@@ -34,18 +47,20 @@
 </template>
 
 <script setup lang="ts">
+//переделать структуру компнонета
 import type { IUser } from "~/types/user";
 const router = useRouter();
-const { clear, user } = useUserSession();
+const { clear } = useUserSession();
 
 const dataUser = ref<IUser>({
   name: "",
   email: "",
-  age: '',
-  gender: '',
+  age: null,
+  gender: null,
 });
 
 const { data, error } = await useFetch<IUser>("/api/profile/user");
+
 
 
 const saveEdit = async (): Promise<void> => {
@@ -54,7 +69,12 @@ const saveEdit = async (): Promise<void> => {
       method: "PUT",
       body: dataUser.value,
     })
-    console.log(response);
+   
+    if(response) {
+      console.log(response);
+    }
+
+
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Get profile error:", error.message);

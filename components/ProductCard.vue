@@ -23,4 +23,25 @@ import type { IProduct } from "~/types/product";
 
 const props = defineProps<IProduct>();
 
+
+const addBasket = async() => {
+  try {
+    const response = await $fetch("/api/basket/basketAdd", {
+      method: "POST",
+      body: {
+        productId: props.id,
+        quantity: 1,
+      },
+    });
+
+    console.log(response);
+
+
+  } catch(error: unknown) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+};
+
 </script>
