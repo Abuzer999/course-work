@@ -3,7 +3,7 @@
 
 
     <div>
-        <BasketCard />
+        <BasketList />
     </div>
 </template>
 

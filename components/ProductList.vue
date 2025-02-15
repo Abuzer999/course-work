@@ -6,6 +6,7 @@
       v-for="product in products"
       :key="product.id"
       :id="product.id"
+      :image="product.image"
       :name="product.name"
       :description="product.description"
       :price="product.price"
@@ -34,12 +35,13 @@ const offset = ref<number>(1);
 const totalProducts = ref<number>(0);
 
 
+
 const getListProducts = async () => {
   try {
     const cacheKey = `products-${limit.value}-${offset.value}`;
     const skip = (offset.value - 1) * limit.value;
 
-    const { data: dataProducts, refresh } = await useLazyAsyncData(cacheKey, () =>
+    const { data: dataProducts, refresh } = await useAsyncData(cacheKey, () =>
       $fetch(`/api/products/products?limit=${limit.value}&offset=${skip}`), 
       {
         getCachedData: (key) => {
@@ -53,6 +55,8 @@ const getListProducts = async () => {
         },
       }
     );
+
+    console.log(dataProducts)
 
     if (dataProducts.value) {
       products.value = dataProducts.value.products;

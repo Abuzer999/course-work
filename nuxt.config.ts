@@ -11,9 +11,19 @@ export default defineNuxtConfig({
     "@vee-validate/nuxt",
     "@nuxt/icon",
     "nuxt-auth-utils",
+    'nuxt-file-storage',
   ],
   runtimeConfig: {
     JWT_SECRET: process.env.JWT_SECRET,
+    NUXT_READ_WRITE_TOKEN: process.env.NUXT_READ_WRITE_TOKEN,
+    public: {
+      blobUrl: 'https://grqasdzxb2wnxxa9.public.blob.vercel-storage.com',
+    },
+  },
+  image: {
+    domains: [
+      'avatars0.githubusercontent.com'
+    ]
   },
   ssr: false,
   tailwindcss: {
@@ -24,6 +34,9 @@ export default defineNuxtConfig({
   },
   experimental: {
     componentIslands: true,
+  },
+  fileStorage: {
+    mount: process.env.MOUNT_PATH,
   },
   fonts: {
     families: [

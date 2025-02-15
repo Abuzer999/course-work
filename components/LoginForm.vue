@@ -36,6 +36,8 @@
 import { loginSchema } from "~/validation/loginSchema";
 const isLoggin = ref<boolean>(false);
 
+const router = useRouter();
+
 const { fetch } = useUserSession();
 
 const emit = defineEmits<{
@@ -72,7 +74,7 @@ const SignIn = handleSubmit(async (values) => {
 
     await fetch();
     console.log(response);
-    navigateTo("/");
+    router.push("/");
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);

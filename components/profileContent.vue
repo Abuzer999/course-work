@@ -1,6 +1,8 @@
 <template>
   <div>
     <form>
+
+      <avatarProfile />
       <div>
         <label for="name">Name</label>
         <input v-model="dataUser.name" id="name" type="text" />

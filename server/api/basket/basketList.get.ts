@@ -1,6 +1,6 @@
 import prisma from "~/lib/prisma";
 import type { UserSession } from "#auth-utils";
-import { basketItem } from "~/types/basket";
+import { BasketItem } from "~/types/basket";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -40,9 +40,10 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const items: basketItem[] = basket.items.map((item) => ({
+    const items: BasketItem[] = basket.items.map((item) => ({
       productId: item.product.id,
       name: item.product.name,
+      image: item.product.image,
       price: item.product.price,
       quantity: item.quantity,
       totalPrice: item.quantity * item.product.price

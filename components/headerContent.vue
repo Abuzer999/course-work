@@ -12,6 +12,10 @@
           </li>
         </ul>
 
+        <NuxtLink to="/profile">
+          <PhotoProfile size="w-[46px] h-[46px]" />
+        </NuxtLink>
+
         <button @click="goBasket" class="flex">
           <Icon
             name="i-material-symbols:shopping-cart-rounded"
@@ -30,16 +34,12 @@ const links = [
     href: "/products",
   },
   {
-    name: "Trend",
+    name: "About us",
     href: "/",
-  },
-  {
-    name: "Profile",
-    href: "/profile",
   },
 ];
 
 const goBasket = () => {
-  navigateTo('/basket')
-}
+  navigateTo("/basket");
+};
 </script>

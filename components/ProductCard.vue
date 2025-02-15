@@ -1,6 +1,8 @@
 <template>
   <div>
+  
     <NuxtLink :to="`/products/${id}`">
+      <NuxtImg v-if="image" :src="image" class="w-[200px] h-[200px]" />
       <h1>{{ name }}</h1>
       <p>{{ description }}</p>
       <span>Price: {{ price }}р</span>
