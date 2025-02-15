@@ -16,6 +16,7 @@
     "@nuxt/fonts": "^0.10.3",
     "@nuxt/icon": "^1.10.3",
     "@nuxt/image": "^1.9.0",
+    "@nuxtjs/cloudinary": "^4.0.0",
     "@nuxtjs/tailwindcss": "^6.13.1",
     "@pinia/nuxt": "^0.10.1",
     "@prisma/nuxt": "^0.3.0",
@@ -23,7 +24,6 @@
     "@vee-validate/zod": "^4.15.0",
     "@vercel/blob": "^0.27.1",
     "bcrypt": "^5.1.1",
-    "cropperjs": "^1.6.2",
     "jsonwebtoken": "^9.0.2",
     "nuxt": "^3.15.1",
     "nuxt-auth-utils": "^0.5.15",
@@ -31,11 +31,11 @@
     "pinia": "^3.0.1",
     "vue": "^3.5.13",
     "vue-advanced-cropper": "^2.8.9",
-    "vue-cropperjs": "^5.0.0",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^1.0.1",
+    "@nuxthub/core": "^0.8.17",
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.8",
     "eslint": "^9.18.0",
