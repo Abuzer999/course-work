@@ -14,6 +14,7 @@
 <script setup lang="ts">
 
 const{ preview } = usePhoto()
+
 interface Props {
   size?: string;
 }

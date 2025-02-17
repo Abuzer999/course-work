@@ -70,14 +70,24 @@ export default defineEventHandler(async (event) => {
     });
 
     if (existingBasketItem) {
-      // Обновить количество товара, если он уже есть в корзине
-      const updatedBasketItem = await prisma.basketItems.update({
-        where: { id: existingBasketItem.id },
-        data: {
-          quantity: existingBasketItem.quantity + body.quantity, // Добавить количество
-        },
-      });
-      return updatedBasketItem;
+      const newQuantity = existingBasketItem.quantity + body.quantity;
+
+      if (newQuantity < 1) {
+        // Удалить товар из корзины, если количество меньше 1
+        await prisma.basketItems.delete({
+          where: { id: existingBasketItem.id },
+        });
+        return { message: "Item removed from basket." };
+      } else {
+        // Обновить количество товара, если оно больше или равно 1
+        const updatedBasketItem = await prisma.basketItems.update({
+          where: { id: existingBasketItem.id },
+          data: {
+            quantity: newQuantity, // Обновить количество
+          },
+        });
+        return updatedBasketItem;
+      }
     } else {
       // Если товара нет в корзине, добавляем новый элемент
       const basketItem = await prisma.basketItems.create({

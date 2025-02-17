@@ -32,6 +32,10 @@ body {
   position: relative;
 }
 
+main {
+  flex: 1 1 auto;
+}
+
 ul,
 ol {
   list-style: none;

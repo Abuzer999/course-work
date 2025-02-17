@@ -19,16 +19,16 @@
       />
     </div>
 
+    <span class="text-[red] mt-[10px] text-center">{{ errorMessage }}</span>
+    
     <div class="flex flex-col gap-[12px] mt-[36px]">
       <buttonForm text="Sign In" icon="i-material-symbols:exit-to-app-sharp" />
       <buttonForm
-        text="Login"
+        text="Register"
         icon="i-material-symbols:exit-to-app-sharp"
         @click.prevent="emit('toggleLogin')"
       />
     </div>
-
-    <span class="text-[green]">{{ successMessage }}</span>
   </form>
 </template>
 
@@ -38,13 +38,13 @@ const isLoggin = ref<boolean>(false);
 
 const router = useRouter();
 
+const errorMessage = ref<string>("");
+
 const { fetch } = useUserSession();
 
 const emit = defineEmits<{
   (event: "toggleLogin"): void;
 }>();
-
-const successMessage = ref<string>("");
 
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: loginSchema,
@@ -68,16 +68,14 @@ const SignIn = handleSubmit(async (values) => {
       body: { email, password },
     });
 
-    if (!response) {
-      throw new Error("Failed to login");
-    }
-
     await fetch();
     console.log(response);
     router.push("/");
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error(error.message);
+    if(error.statusCode === 401) {
+      errorMessage.value = "Invalid email or password.";
+    } else {
+      errorMessage.value = "An error occurred during login. Please try again.";
     }
   } finally {
     isLoggin.value = false;

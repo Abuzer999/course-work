@@ -21,7 +21,6 @@ export default defineEventHandler(async (event) => {
 
     const user = await prisma.user.findUnique({
       where: { email },
-      select: { id: true, password: true, role: true, email: true },
     });
 
     if (!user) {
@@ -35,7 +34,6 @@ export default defineEventHandler(async (event) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Задержка
       throw createError({
         statusCode: 401,
         message: "Invalid email or password.",
@@ -59,14 +57,12 @@ export default defineEventHandler(async (event) => {
     });
 
     return {
-      session,
       statusMessage: "Login successful!",
     };
   } catch (error: any) {
-    console.error("Login error:", error);
     throw createError({
-      statusCode: error.statusCode,
-      message: error.message,
+      statusCode: error.statusCode || 500,
+      message: error.message || "Login failed.",
     });
   }
 });

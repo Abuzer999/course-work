@@ -9,42 +9,19 @@
       <input
         type="file"
         class="hidden"
+        @input="handleFileInput"
         accept="image/*"
       />
       Upload
       <Icon name="i-material-symbols:edit" class="w-[20px] h-[20px]" />
     </label>
   </div>
+  <div>
+  </div>
 </template>
 
 <script setup lang="ts">
 const { handleFileInput, files } = useFileStorage();
-const { preview } = usePhoto(); // Локальный предпросмотр
+const { preview } = usePhoto();
 
-const fileData = ref<File | null>(null); // Загружаемый файл
-
-// const handleFileInput = async (event: Event) => {
-//   const target = event.target as HTMLInputElement;
-//   const file = target.files?.[0];
-
-//   if (file) {
-//     preview.value = URL.createObjectURL(file); // Показываем превью
-//     fileData.value = file;
-
-//     // await uploadFile(file) // Отправляем на сервер
-//   }
-// };
-
-const submit = async (): Promise<void> => {
-  const response = await $fetch("/api/profile/upload", {
-    method: "POST",
-    body: {
-      file: files.value[0],
-    },
-  });
-
-  if (response) {
-    console.log(response);
-  }
-};
 </script>

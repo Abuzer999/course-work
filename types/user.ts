@@ -4,4 +4,3 @@ export interface IUser {
   age: number | null;
   gender: "male" | "female" | null;
 }
-

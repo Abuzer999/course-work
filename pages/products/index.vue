@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container">
         <ProductList />
     </div>
 </template>
@@ -10,3 +10,4 @@ definePageMeta({
   middleware: ["auth"],
 })
 </script>
+

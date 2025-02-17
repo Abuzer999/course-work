@@ -1,10 +1,20 @@
 <template>
-  <div>
-    <NuxtImg v-if="product?.image" :src="product?.image" />
-    <h1>{{ product?.name }}</h1>
-    <p>{{ product?.description }}</p>
-    <p>Price: ${{ product?.price }}</p>
-    <p>Stock: {{ product?.stock }}</p>
+  <div class="grid grid-cols-[500px_600px] justify-center gap-[80px]">
+    <div
+      class="flex items-center justify-center w-full px-[50px] h-[500px] py-[50px] bg-[#f7f7f7]"
+    >
+      <NuxtImg
+        v-if="product?.image"
+        :src="product?.image"
+        class="w-full h-full object-contain"
+      />
+    </div>
+    <div>
+      <h1 class="text-[45px] font-[700] leading-[100%]">{{ product?.name }}</h1>
+      <p class="text-[22px] font-[500] leading-[100%] mt-[15px]">{{ product?.description }}</p>
+      <p class="text-[20px] font-[500] leading-[100%] mt-[15px]">{{ product?.price }} ₽</p>
+      <p class="text-[20px] font-[500] leading-[100%] mt-[15px]">Stock: {{ product?.stock }}</p>
+    </div>
   </div>
 </template>
 
@@ -22,16 +32,10 @@ const {
   data: productData,
   error,
   refresh,
-
 } = await useFetch<IProduct>(`/api/products/${productId}`, {
   key: cacheKey,
   getCachedData: (key) => {
     const cachedData = nuxtApp.payload.data[key] || nuxtApp.static.data[key];
-    if (cachedData) {
-      console.log(`Данные загружены из кэша для ключа: ${key}`);
-    } else {
-      console.log(`Кэш не найден для ключа: ${key}`);
-    }
     return cachedData;
   },
 });
@@ -50,7 +54,7 @@ const getProduct = async () => {
     } else {
       await refresh();
     }
-  } catch (error: unknown) {  
+  } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);
     }

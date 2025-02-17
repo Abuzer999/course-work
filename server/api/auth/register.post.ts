@@ -1,14 +1,14 @@
-import bcrypt from 'bcrypt';
-import prisma from '~/lib/prisma';
+import bcrypt from "bcrypt";
+import prisma from "~/lib/prisma";
 
 export default defineEventHandler(async (event) => {
   try {
-    const { name, email, password } = await readBody(event);  // Получаем данные из тела запроса
+    const { name, email, password } = await readBody(event);
 
     if (!name || !email || !password) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Name, email, and password are required.',           
+        statusMessage: "Name, email, and password are required.",
       });
     }
 
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     if (existingUser) {
       throw createError({
         statusCode: 400,
-        message: 'User with this email already exists.',
+        statusMessage: "User with this email already exists.",
       });
     }
 
@@ -43,22 +43,23 @@ export default defineEventHandler(async (event) => {
     });
 
     return {
-      message: 'User registered successfully!',
+      message: "User registered successfully!",
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
-      }, 
+      },
       basket: {
         id: basket.id,
         userId: basket.userId,
         items: [],
-      }
+      },
     };
   } catch (error: any) {
-    return {
-      statusCode: error.statusCode,
-      message: error.message,
-    };
+    // Явно выбрасываем ошибку
+    throw createError({
+      statusCode: error.statusCode || 500,
+      statusMessage: error.statusMessage || "Internal Server Error",
+    });
   }
 });

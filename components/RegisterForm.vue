@@ -37,7 +37,7 @@
 
     <div class="flex flex-col gap-[12px] mt-[36px]">
       <buttonForm
-        text="Sign In"
+        text="Sign Up"
         icon="i-material-symbols:exit-to-app-sharp"
         class="bg-[#358bfc]"
       />
@@ -48,20 +48,25 @@
       />
     </div>
 
-    <span class="text-[green] mt-[10px] text-center">{{ successMessage }}</span>
+    <span v-if="successMessage" class="text-[green] mt-[10px] text-center">{{
+      successMessage
+    }}</span>
+    <span v-if="errorMessage" class="text-[red] mt-[10px] text-center">{{
+      errorMessage
+    }}</span>
   </form>
 </template>
 
 <script setup lang="ts">
 import { registerSchema } from "~/validation/registerSchema";
 const isSubmitting = ref(false);
-const router = useRouter();
 
 const emit = defineEmits<{
   (event: "toggleLogin"): void;
 }>();
 
 const successMessage = ref<string>("");
+const errorMessage = ref<string>("");
 
 const { resetForm, errors, defineField, handleSubmit } = useForm({
   validationSchema: registerSchema,
@@ -83,14 +88,20 @@ const onSumbit = handleSubmit(async (values) => {
       method: "POST",
       body: { name, email, password },
     });
-    console.log(response);
-    resetForm();
-    successMessage.value = 'User successfully registered';
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error(error.message);
+
+    if (response) {
+      errorMessage.value = "";
+      resetForm();
+      successMessage.value = "User successfully registered";
     }
-  }finally {
+  } catch (error: any) {
+    if (error.statusCode === 400) {
+      errorMessage.value = "This email is already registered";
+    } else {
+      errorMessage.value =
+        "An error occurred during registration. Please try again.";
+    }
+  } finally {
     isSubmitting.value = false;
   }
 });
