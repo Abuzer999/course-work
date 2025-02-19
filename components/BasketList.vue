@@ -10,6 +10,7 @@
       :name="card.name"
       :quantity="card.quantity"
       :totalPrice="card.totalPrice"
+      @updateBasket="getBasketList"
     />
   </div>
   <div v-else>

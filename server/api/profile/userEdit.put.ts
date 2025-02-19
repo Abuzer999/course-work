@@ -69,13 +69,6 @@ export default defineEventHandler(async (event) => {
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      select: {
-        name: true,
-        email: true,
-        age: true,
-        gender: true,
-        updatedAt: true,
-      },
       data: {
         name: body.name ?? undefined,
         email: body.email ?? undefined,

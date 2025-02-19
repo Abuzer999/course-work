@@ -4,7 +4,7 @@
     >
       <NuxtImg
         :src="preview || '../public/defaultProfile.svg'"
-        class="rounded-[50%] object-cover bg-center bg-cover"
+        class="rounded-[50%] object-cover bg-center bg-cover шьфпу"
         :class="size"
       />
     </div>
@@ -12,8 +12,9 @@
 
 
 <script setup lang="ts">
-
 const{ preview } = usePhoto()
+
+const { data } = await useFetch('/api/profile/user')
 
 interface Props {
   size?: string;
@@ -21,5 +22,11 @@ interface Props {
 
 defineProps<Props>()
 
-watchEffect(preview)
+watchEffect(() => preview)
+
+onMounted(() => {
+  if (data.value) {
+    preview.value = data.value.profilePic 
+  }
+})
 </script>

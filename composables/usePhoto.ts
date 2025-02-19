@@ -1,5 +1,7 @@
 export const usePhoto = () => {
-    return {
-        preview: useState<string | null>('preview', () => null),
-    }
-}
+  const preview = useState<string | null>("preview", () => null);
+
+  return {
+    preview,
+  };
+};

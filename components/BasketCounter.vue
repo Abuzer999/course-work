@@ -7,7 +7,7 @@
       class="w-[25px] h-[25px]"
       @click="removeProduct"
     />
-    <span class="font-[700] text-[20px]">{{ quanty }}</span>
+    <span class="font-[700] text-[20px] min-w-[30px]">{{ quanty }}</span>
     <Icon
       name="i-material-symbols:add-rounded"
       class="w-[25px] h-[25px]"

@@ -1,33 +1,67 @@
-import { put } from "@vercel/blob";
+import { put, del } from "@vercel/blob";  
 import prisma from "~/lib/prisma";
 import type { UserSession } from "#auth-utils";
 
 export default defineEventHandler(async (event) => {
-  const session: UserSession = await getUserSession(event);
-  const body = await readMultipartFormData(event); // Читаем FormData
+  try {
+    const session: UserSession = await getUserSession(event);
+    const userId = session?.user?.id;
 
-  if (!session?.user?.id) {
-    throw createError({ statusCode: 400, message: "User ID is required." });
+    if (!userId) {
+      throw createError({
+        statusCode: 400,
+        message: "User ID is required.",
+      });
+    }
+
+    // Чтение файлов через multipart/form-data
+    const formData = await readMultipartFormData(event);
+    const file = formData?.find((field) => field.name === "file");
+
+    if (!file) {
+      throw createError({
+        statusCode: 400,
+        message: "File is required.",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        profilePic: true,  
+      },
+    });
+
+    if (user?.profilePic) {
+      try {
+        await del(user.profilePic); 
+      } catch (deleteError) {
+        console.error("Error deleting previous profile image:", deleteError);
+      }
+    }
+
+    const blob = await put(`ProfileImage/${file.filename}`, file.data, {
+      access: "public",
+    });
+
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        profilePic: blob.url,
+      },
+    });
+
+    return {
+      url: blob.url,
+    };
+  } catch (error: any) {
+    throw createError({
+      statusCode: error.statusCode || 500,
+      message: error.message || "An error occurred.",
+    });
   }
-
-  // Ищем файл в FormData
-  const file = body?.find((item) => item.name === "image")?.data;
-
-  if (!file) {
-    throw createError({ statusCode: 400, message: "No file provided" });
-  }
-
-  // Преобразуем File в Buffer
-  const fileName = `${Date.now()}-profile-pic.png`;
-
-  // Загружаем файл на Vercel Blob
-  const blob = await put(fileName, file, { access: "public" });
-
-  // Сохраняем URL в базе данных
-  await prisma.user.update({
-    where: { id: session.user.id },
-    data: { profilePic: blob.url },
-  });
-
-  return { message: "Profile picture uploaded successfully", url: blob.url };
 });

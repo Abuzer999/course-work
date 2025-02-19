@@ -1,29 +1,31 @@
 <template>
   <div>
     <form>
-
       <avatarProfile />
-      <div>
-        <label for="name">Name</label>
-        <input v-model="dataUser.name" id="name" type="text" />
-      </div>
-      <div>
-        <label for="email">Email</label>
-        <input v-model="dataUser.email" id="email" type="email" />
-      </div>
-      <div>
-        <label for="age">Age</label>
-        <input v-model="dataUser.age" id="age" type="number" />
-      </div>
+
+      <childInput v-model="dataUser.name" type="text" placeholder="Name" />
+      <childInput v-model="dataUser.email" type="email" placeholder="Email" />
+      <childInput v-model="dataUser.age" type="number" placeholder="Age" />
+
       <div>
         <label>Gender:</label>
         <div>
           <label for="male">Male</label>
-          <input v-model="dataUser.gender" id="male" type="radio" value="male" />
+          <input
+            v-model="dataUser.gender"
+            id="male"
+            type="radio"
+            value="male"
+          />
         </div>
         <div>
           <label for="female">Female</label>
-          <input v-model="dataUser.gender" id="female" type="radio" value="female" />
+          <input
+            v-model="dataUser.gender"
+            id="female"
+            type="radio"
+            value="female"
+          />
         </div>
       </div>
       <button
@@ -54,36 +56,34 @@ import type { IUser } from "~/types/user";
 const router = useRouter();
 const { clear } = useUserSession();
 
+const { preview } = usePhoto();
+
 const dataUser = ref<IUser>({
   name: "",
   email: "",
   age: null,
   gender: null,
+  profilePic: null,
 });
 
 const { data, error } = await useFetch<IUser>("/api/profile/user");
-
-
 
 const saveEdit = async (): Promise<void> => {
   try {
     const response: IUser = await $fetch("/api/profile/userEdit", {
       method: "PUT",
       body: dataUser.value,
-    })
-   
-    if(response) {
+    });
+
+    if (response) {
       console.log(response);
     }
-
-
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Get profile error:", error.message);
     }
   }
-}
-
+};
 
 const getInfoProfile = async (): Promise<void> => {
   try {
@@ -95,6 +95,7 @@ const getInfoProfile = async (): Promise<void> => {
 
     if (data.value) {
       dataUser.value = data.value;
+      preview.value = data.value.profilePic;
     }
   } catch (error: unknown) {
     if (error instanceof Error) {

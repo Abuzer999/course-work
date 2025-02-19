@@ -3,4 +3,5 @@ export interface IUser {
   email: string;
   age: number | null;
   gender: "male" | "female" | null;
+  profilePic: string | null;
 }
