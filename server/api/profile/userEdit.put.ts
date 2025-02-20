@@ -53,7 +53,7 @@ export default defineEventHandler(async (event) => {
           message: "Invalid email format.",
         });
 
-      case !body.age || isNaN(body.age) || (body.age < Number(10) && body.age > Number(100)):
+      case !body.age || isNaN(body.age) || (body.age < 10 || body.age > 100):
         throw createError({
           statusCode: 400,
           message: "Age must be a valid positive number between 10 and 100.",
@@ -79,10 +79,9 @@ export default defineEventHandler(async (event) => {
 
     return updatedUser;
   } catch (error: any) {
-    console.error("Ошибка обновления профиля:", error);
     throw createError({
       statusCode: error.statusCode || 500,
-      message: "Не удалось обновить профиль.",
+      message: error.message || "Internal Server Error",
     });
   }
 });

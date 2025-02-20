@@ -23,9 +23,22 @@
           type="number"
           placeholder="Age"
           name="Age"
+          min="0"
+          onkeypress="return event.charCode >= 48 && event.charCode <= 57"
         />
       </div>
     </form>
+
+    <span
+      v-if="messageError"
+      class="flex justify-center text-[red] mt-[10px] text-center"
+      >{{ messageError }}</span
+    >
+    <span
+      v-else
+      class="flex justify-center text-[#0b8124] mt-[10px] text-center"
+      >{{ messageSuccess }}</span
+    >
 
     <div class="flex items-center justify-center gap-[20px] mt-[40px]">
       <button
@@ -51,8 +64,10 @@
 </template>
 
 <script setup lang="ts">
+import { set } from "~/node_modules/nuxt/dist/app/compat/capi";
 import type { IUser } from "~/types/user";
 const router = useRouter();
+
 const { clear } = useUserSession();
 
 const { preview } = usePhoto();
@@ -65,9 +80,13 @@ const dataUser = ref<IUser>({
   profilePic: null,
 });
 
+const { messageError, messageSuccess } = useMessage();
+
 const { data, error } = await useFetch<IUser>("/api/profile/user");
 
 const saveEdit = async (): Promise<void> => {
+  messageError.value = null;
+  messageSuccess.value = null;
   try {
     const response: IUser = await $fetch("/api/profile/userEdit", {
       method: "PUT",
@@ -75,23 +94,20 @@ const saveEdit = async (): Promise<void> => {
     });
 
     if (response) {
-      console.log(response);
+      messageSuccess.value = "Changes saved successfully.";
+      setTimeout(() => {
+        messageSuccess.value = null;
+      }, 4000);
     }
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Get profile error:", error.message);
+  } catch (error: any) {
+    if (error.statusCode === 400) {
+      messageError.value = error.data.message;
     }
   }
 };
 
 const getInfoProfile = async (): Promise<void> => {
   try {
-    if (error.value) {
-      console.error("Get profile error:", error.value.message);
-    }
-
-    console.log(data.value);
-
     if (data.value) {
       dataUser.value = data.value;
       preview.value = data.value.profilePic;
@@ -109,4 +125,8 @@ const logout = async (): Promise<void> => {
 };
 
 onMounted(getInfoProfile);
+onBeforeMount(() => {
+  messageError.value = null;
+  messageSuccess.value = null;
+});
 </script>

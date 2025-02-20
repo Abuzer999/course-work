@@ -38,7 +38,7 @@ const isLoggin = ref<boolean>(false);
 
 const router = useRouter();
 
-const errorMessage = ref<string>("");
+const { messageError, messageSuccess } = useMessage();
 
 const { fetch } = useUserSession();
 
@@ -58,6 +58,7 @@ const [passwordLogin, passwordLoginAttrs] = defineField("password", {
 });
 
 const SignIn = handleSubmit(async (values) => {
+  messageError.value = null;
   if (isLoggin.value) return;
   isLoggin.value = true;
   try {
@@ -69,16 +70,16 @@ const SignIn = handleSubmit(async (values) => {
     });
 
     await fetch();
-    console.log(response);
     router.push("/");
-  } catch (error: unknown) {
+  } catch (error: any) {
     if(error.statusCode === 401) {
-      errorMessage.value = "Invalid email or password.";
+      messageError.value = "Invalid email or password.";
     } else {
-      errorMessage.value = "An error occurred during login. Please try again.";
+      messageError.value = "An error occurred during login. Please try again.";
     }
   } finally {
     isLoggin.value = false;
   }
 });
+
 </script>

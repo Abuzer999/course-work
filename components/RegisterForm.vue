@@ -48,11 +48,11 @@
       />
     </div>
 
-    <span v-if="successMessage" class="text-[green] mt-[10px] text-center">{{
-      successMessage
+    <span v-if="messageSuccess" class="text-[green] mt-[10px] text-center">{{
+      messageSuccess
     }}</span>
-    <span v-if="errorMessage" class="text-[red] mt-[10px] text-center">{{
-      errorMessage
+    <span v-else class="text-[red] mt-[10px] text-center">{{
+      messageError
     }}</span>
   </form>
 </template>
@@ -65,8 +65,7 @@ const emit = defineEmits<{
   (event: "toggleLogin"): void;
 }>();
 
-const successMessage = ref<string>("");
-const errorMessage = ref<string>("");
+const { messageError, messageSuccess } = useMessage();
 
 const { resetForm, errors, defineField, handleSubmit } = useForm({
   validationSchema: registerSchema,
@@ -90,15 +89,15 @@ const onSumbit = handleSubmit(async (values) => {
     });
 
     if (response) {
-      errorMessage.value = "";
+      messageError.value = "";
       resetForm();
-      successMessage.value = "User successfully registered";
+      messageSuccess.value = "User successfully registered";
     }
   } catch (error: any) {
     if (error.statusCode === 400) {
-      errorMessage.value = "This email is already registered";
+      messageError.value = "This email is already registered";
     } else {
-      errorMessage.value =
+      messageError.value =
         "An error occurred during registration. Please try again.";
     }
   } finally {
