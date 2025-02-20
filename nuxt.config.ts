@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     "@vee-validate/nuxt",
     "@nuxt/icon",
     "nuxt-auth-utils",
+    '@vueuse/nuxt',
   ],
   runtimeConfig: {
     JWT_SECRET: process.env.JWT_SECRET,
@@ -27,9 +28,6 @@ export default defineNuxtConfig({
   },
   experimental: {
     componentIslands: true,
-  },
-  fileStorage: {
-    mount: process.env.MOUNT_PATH,
   },
   fonts: {
     families: [

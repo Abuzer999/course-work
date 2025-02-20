@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     }
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { name: true, email: true, age: true, gender: true },
+      select: { name: true, email: true, age: true },
     });
 
     if (!user) {
@@ -38,8 +38,7 @@ export default defineEventHandler(async (event) => {
     switch (true) {
       case body.name === user.name &&
         body.email === user.email &&
-        body.age === user.age &&
-        body.gender === user.gender:
+        body.age === user.age:
         throw createError({ statusCode: 400, message: "No changes detected." });
 
       case !body.name || body.name.trim().length < 2:
@@ -54,16 +53,10 @@ export default defineEventHandler(async (event) => {
           message: "Invalid email format.",
         });
 
-      case !body.age || isNaN(body.age) || (body.age < 10 && body.age > 100):
+      case !body.age || isNaN(body.age) || (body.age < Number(10) && body.age > Number(100)):
         throw createError({
           statusCode: 400,
           message: "Age must be a valid positive number between 10 and 100.",
-        });
-
-      case !["male", "female"].includes(body.gender as string):
-        throw createError({
-          statusCode: 400,
-          message: "Gender must be either 'male' or 'female'.",
         });
     }
 
@@ -73,7 +66,7 @@ export default defineEventHandler(async (event) => {
         name: body.name ?? undefined,
         email: body.email ?? undefined,
         age: body.age ?? undefined,
-        gender: body.gender ?? undefined,
+
       },
     });
 

@@ -7,11 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Gender {
-  male   @map("male")
-  female @map("female")
-}
-
 enum Role {
   admin
   user
@@ -24,7 +19,6 @@ model User {
   password   String
   role       Role     @default(user)
   age        Int?
-  gender     Gender?
   profilePic String?
   basket     Basket?
   createdAt  DateTime @default(now())

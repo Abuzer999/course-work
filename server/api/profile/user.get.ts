@@ -30,7 +30,6 @@ export default defineEventHandler(async (event) => {
         name: true,
         email: true,
         age: true,
-        gender: true,
         profilePic: true,
       },
     });
