@@ -19,10 +19,10 @@
       />
     </div>
 
-    <span class="text-[red] mt-[10px] text-center">{{ errorMessage }}</span>
+    <span class="text-[red] mt-[10px] text-center">{{ messageError }}</span>
     
     <div class="flex flex-col gap-[12px] mt-[36px]">
-      <buttonForm text="Sign In" icon="i-material-symbols:exit-to-app-sharp" />
+      <buttonForm text="Sign In" icon="i-material-symbols:exit-to-app-sharp" :disabled="isLoggin" :class="isLoggin ? 'opacity-50 cursor-not-allowed' : ''" />
       <buttonForm
         text="Register"
         icon="i-material-symbols:exit-to-app-sharp"

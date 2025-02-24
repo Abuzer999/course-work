@@ -1,5 +1,8 @@
 import prisma from "~/lib/prisma";
 import type { UserSession } from "#auth-utils";
+import { useBasket } from "~/composables/useBasket";
+
+const { updateTotalAmount } = useBasket();
 
 export default defineEventHandler(async (event) => {
   try {
@@ -61,6 +64,8 @@ export default defineEventHandler(async (event) => {
       });
     }
 
+    let updatedBasketItem;
+
     // Проверка, существует ли уже товар в корзине
     const existingBasketItem = await prisma.basketItems.findFirst({
       where: {
@@ -77,35 +82,37 @@ export default defineEventHandler(async (event) => {
         await prisma.basketItems.delete({
           where: { id: existingBasketItem.id },
         });
+
+        // Обновить `totalAmount` после удаления товара
+        await updateTotalAmount(basket.id);
+
         return { message: "Item removed from basket." };
       } else {
         // Обновить количество товара, если оно больше или равно 1
-        const updatedBasketItem = await prisma.basketItems.update({
+        updatedBasketItem = await prisma.basketItems.update({
           where: { id: existingBasketItem.id },
-          data: {
-            quantity: newQuantity, // Обновить количество
-          },
+          data: { quantity: newQuantity, totalPrice: newQuantity * product.price },
         });
-        return updatedBasketItem;
       }
     } else {
       // Если товара нет в корзине, добавляем новый элемент
-      const basketItem = await prisma.basketItems.create({
+      updatedBasketItem = await prisma.basketItems.create({
         data: {
           productId: body.productId,
           quantity: body.quantity,
           cartId: basket.id, // Привязка к корзине
+          totalPrice: body.quantity * product.price,
         },
       });
-
-      return basketItem;
     }
-  } catch (error: unknown) {
-    console.error("Error adding item to basket:", error);
 
+    const totalAmount = await updateTotalAmount(basket.id);
+
+    return { updatedBasketItem, totalAmount };
+  } catch (error: any) {
     throw createError({
-      statusCode: 500,
-      message: "Failed to add item to basket.",
+      statusCode: error.statusCode || 500,
+      message: error.message || "Failed to add item to basket.",
     });
   }
 });

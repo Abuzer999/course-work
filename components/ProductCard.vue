@@ -29,11 +29,12 @@
       >
     </NuxtLink>
 
-    <buttonAddBasket :inBasket="inBasket" @addInBasket="addBasket" class="mt-auto flex justify-center" />
+    <buttonAddBasket :inBasket="inBasket" @addInBasket="loggedIn ? addBasket() : navigateTo('/auth')" class="mt-auto flex justify-center" />
   </div>
 </template>
 
 <script setup lang="ts">
+const { loggedIn } = useUserSession();
 import type { IProduct } from "~/types/product";
 const props = defineProps<IProduct>();
 

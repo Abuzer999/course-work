@@ -3,6 +3,7 @@ export interface BasketItem {
     name: string;
     image: string | null;
     price: number;
+    description: string;
     quantity: number;
     totalPrice: number;
 }

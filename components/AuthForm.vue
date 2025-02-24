@@ -37,7 +37,6 @@ const toggleLogin = () => {
   transform: scale(1);
 }
 
-/* Выход (исчезновение) */
 .fade-scale-leave-from {
   opacity: 1;
   transform: scale(1);

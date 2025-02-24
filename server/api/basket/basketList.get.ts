@@ -1,6 +1,9 @@
 import prisma from "~/lib/prisma";
 import type { UserSession } from "#auth-utils";
 import { BasketItem } from "~/types/basket";
+import { useBasket } from "~/composables/useBasket";
+
+const { updateTotalAmount } = useBasket(); 
 
 export default defineEventHandler(async (event) => {
   try {
@@ -23,7 +26,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const basket = await prisma.basket.findUnique({
-      where: { userId: userId },
+      where: { userId },
       include: {
         items: {
           include: {
@@ -45,18 +48,19 @@ export default defineEventHandler(async (event) => {
       name: item.product.name,
       image: item.product.image,
       price: item.product.price,
+      description: item.product.description,
       quantity: item.quantity,
-      totalPrice: item.quantity * item.product.price
+      totalPrice: item.quantity * item.product.price,
     }));
 
-    const totalAmount = items.reduce((sum, item) => sum + item.totalPrice, 0);
+    const totalAmount = await updateTotalAmount(basket.id);
 
-    return {totalAmount, items};
+    return { totalAmount, items };
   } catch (error: any) {
     console.error("Ошибка получения товаров:", error);
     throw createError({
-      statusCode: 500,
-      message: "Не удалось получить товары.",
+      statusCode: error.statusCode || 500,
+      message: error.message || "Не удалось получить товары.",
     });
   }
 });

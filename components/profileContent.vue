@@ -64,7 +64,6 @@
 </template>
 
 <script setup lang="ts">
-import { set } from "~/node_modules/nuxt/dist/app/compat/capi";
 import type { IUser } from "~/types/user";
 const router = useRouter();
 
@@ -76,13 +75,12 @@ const dataUser = ref<IUser>({
   name: "",
   email: "",
   age: null,
-  gender: null,
   profilePic: null,
 });
 
 const { messageError, messageSuccess } = useMessage();
 
-const { data, error } = await useFetch<IUser>("/api/profile/user");
+const { data } = await useFetch<IUser>("/api/profile/user");
 
 const saveEdit = async (): Promise<void> => {
   messageError.value = null;

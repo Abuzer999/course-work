@@ -1,7 +1,8 @@
 <template>
-  <div class="flex flex-col h-full">
+  <div v-if="status === 'success'" class="flex flex-col mb-[80px]">
     <div
-      class="flex flex-wrap justify-center gap-[30px_40px] mt-[30px]"
+      ref="el"
+      class="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-[40px_40px] mt-[30px]"
     >
       <ProductCard
         v-for="product in products"
@@ -14,120 +15,64 @@
         :stock="product.stock"
       />
     </div>
+  </div>
+  <div v-else-if="status === 'pending'" class="text-center text-lg mt-4">
+    Загрузка...
+  </div>
 
-    <div class="flex justify-end pb-[20px] mt-[30px]">
-      <div class="flex gap-[8px] items-end">
-        <button
-          @click="offset = 1"
-          :class="[
-            'px-[15px] py-[8px] rounded-[5px] text-[16px] font-[700] ',
-            offset === 1
-              ? 'bg-[#d90e32] text-white'
-              : 'bg-gray-300 text-[#000000]',
-          ]"
-        >
-          1
-        </button>
-
-        <span v-if="pages[0] > 2" class="text-[18px] font-[700]">...</span>
-
-        <button
-          v-for="page in pages"
-          :key="page"
-          @click="offset = page"
-          :class="[
-            'px-[15px] py-[8px] rounded-[5px] text-[16px] font-[700]',
-            offset === page
-              ? 'bg-[#d90e32] text-white'
-              : 'bg-gray-300 text-[#000000]',
-          ]"
-        >
-          {{ page }}
-        </button>
-
-        <span
-          v-if="pages[pages.length - 1] < totalPages - 1"
-          class="text-[18px] font-[700]"
-          >...</span
-        >
-
-        <button
-          v-if="totalPages > 1"
-          @click="offset = totalPages"
-          :class="[
-            'px-[15px] py-[8px] rounded-[5px] text-[16px] font-[700]',
-            offset === totalPages
-              ? 'bg-[#d90e32] text-white'
-              : 'bg-gray-300 text-[#000000]',
-          ]"
-        >
-          {{ totalPages }}
-        </button>
-      </div>
-    </div>
+  <div v-if="loggedIn && session?.user?.role === 'admin'">
+    <AdminCreateProduct />
+    <AdminCreateButton @click="addModal" class="fixed bottom-[50px] right-[50px] cursor-pointer" />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { IProduct } from "~/types/product";
-const router = useRouter();
+const { loggedIn, session } = useUserSession();
+import type { IProduct, IProductDetail } from "~/types/product";
+
 const nuxtApp = useNuxtApp();
 
+const openModal = ref<boolean>(false);
 const products = ref<IProduct[]>([]);
-const limit = ref<number>(10);
-const offset = ref<number>(1);
+const limit = ref<number>(5);
+const offset = ref<number>(0);
 const totalProducts = ref<number>(0);
-const totalPages = computed(() => Math.ceil(totalProducts.value / limit.value));
 
-const pages = computed(() => {
-  const range: number[] = [];
-  if (totalPages.value <= 1) return range;
+const el = useTemplateRef<HTMLElement>("el");
 
-  const start = Math.max(2, offset.value - 1);
-  const end = Math.min(totalPages.value - 1, offset.value + 1);
+const skip = ref<number>(0);
 
-  for (let i = start; i <= end; i++) {
-    range.push(i);
+const { data, status, refresh } = await useLazyAsyncData<IProductDetail>(
+  "products",
+  () =>
+    $fetch(`/api/products/products?limit=${limit.value}&offset=${skip.value}`)
+);
+
+watch(data, (newData: IProductDetail | null) => {
+  if (newData) {
+    products.value.push(...newData.products);
+    totalProducts.value = newData.totalProducts;
   }
-
-  return range;
 });
 
-// const goToPage = (page: number) => {
-//   offset.value = page; // Обновляем текущий номер страницы
-//   router.push(`/products/${page}`); // Переходим на страницу с номером `page`
-// };
+// // 📌 Бесконечный скролл
+useInfiniteScroll(
+  el,
+  async () => {
+    offset.value++;
+    skip.value = offset.value * limit.value;
+    console.log("loading", offset.value, skip.value);
 
-const getListProducts = async () => {
-  try {
-    const cacheKey = `products-${limit.value}-${offset.value}`;
-    const skip = (offset.value - 1) * limit.value;
-
-    const { data: dataProducts, refresh } = await useAsyncData(
-      cacheKey,
-      () =>
-        $fetch(`/api/products/products?limit=${limit.value}&offset=${skip}`),
-      {
-        getCachedData: (key) => {
-          const cachedData =
-            nuxtApp.payload.data[key] || nuxtApp.static.data[key];
-          return cachedData;
-        },
+    await refresh();
+  },
+  {
+    distance: 100,
+    canLoadMore: () => {
+      if (offset.value * limit.value >= totalProducts.value) {
+        return false;
       }
-    );
-
-    if (dataProducts.value) {
-      products.value = dataProducts.value.products;
-      totalProducts.value = dataProducts.value.totalProducts;
-    } else {
-      await refresh();
-    }
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Ошибка получения товаров:", error.message);
-    }
+      return true;
+    },
   }
-};
-
-watch([limit, offset], getListProducts, { immediate: true });
+);
 </script>

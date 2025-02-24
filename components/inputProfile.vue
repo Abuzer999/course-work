@@ -18,15 +18,14 @@
         name="i-material-symbols:edit"
         class="w-[24px] h-[24px] bg-[#000000] cursor-pointer"
         @click="InputOnClick"
-
+        :style="{ background: inputDisabled ? '#a6a6a7' : '#000000' }"
+        
       />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onClickOutside } from "@vueuse/core";
-
 interface Props {
   modelValue: string | number | null;
   type: string;

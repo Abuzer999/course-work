@@ -6,3 +6,10 @@ export interface IProduct {
     price: number;
     stock: number;
 }
+
+export interface IProductDetail extends IProduct {
+    totalProducts: number;
+    limit: number;
+    offset: number;
+    products: IProduct[];
+}
