@@ -24,6 +24,8 @@
             <PhotoProfile size="w-[46px] h-[46px]" />
           </NuxtLink>
 
+          <AdminIcon v-if="loggedIn && session?.user?.role === 'admin'" />
+
           <button v-if="loggedIn" @click="goBasket" class="flex">
             <Icon
               name="i-material-symbols:shopping-cart-rounded"
@@ -45,7 +47,7 @@
 
 <script setup lang="ts">
 const router = useRouter();
-const { loggedIn } = useUserSession();
+const { loggedIn, session } = useUserSession();
 
 const links = [
   {
@@ -54,7 +56,7 @@ const links = [
   },
   {
     name: "About us",
-    href: "/",
+    href: "/about",
   },
 ];
 

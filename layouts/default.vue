@@ -7,5 +7,9 @@
     <main>
       <slot />
     </main>
+
+    <footer>
+      <FooterContent />
+    </footer>
   </div>
 </template>

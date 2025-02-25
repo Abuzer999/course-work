@@ -21,13 +21,12 @@
       </div>
     </div>
 
-    <Teleport to="body" v-else>
-      <p
-        class="flex items-center justify-center mt-[100px] text-[30px] font-[600]"
-      >
-        Products not found
-      </p>
-    </Teleport>
+    <p
+      v-else
+      class="flex items-center justify-center mt-[100px] text-[30px] font-[600]"
+    >
+      Products not found
+    </p>
   </div>
   <div v-else></div>
 </template>

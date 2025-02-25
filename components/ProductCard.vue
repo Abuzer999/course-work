@@ -29,7 +29,7 @@
       >
     </NuxtLink>
 
-    <buttonAddBasket :inBasket="inBasket" @addInBasket="loggedIn ? addBasket() : navigateTo('/auth')" class="mt-auto flex justify-center" />
+    <buttonAddBasket :inBasket="inBasket" @click="loggedIn ? addBasket() : navigateTo('/auth')" class="mt-auto flex justify-center" />
   </div>
 </template>
 
@@ -50,6 +50,7 @@ const addBasket = async (): Promise<void> => {
         quantity: 1,
       },
     });
+    console.log(response);
     inBasket.value = true;
   } catch (error: unknown) {
     if (error instanceof Error) {

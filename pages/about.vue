@@ -1,9 +1,9 @@
+<template>
+  <AboutContent />
+</template>
+
 <script setup lang="ts">
 definePageMeta({
   layout: "default",
 });
 </script>
-
-<template>
-  <MainComponent />
-</template>
