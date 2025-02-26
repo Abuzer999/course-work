@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     "@vee-validate/nuxt",
     "@nuxt/icon",
     "nuxt-auth-utils",
-    '@vueuse/nuxt',
+    "@vueuse/nuxt",
   ],
   runtimeConfig: {
     JWT_SECRET: process.env.JWT_SECRET,
@@ -24,7 +24,15 @@ export default defineNuxtConfig({
     cssPath: "~/assets/css/tailwind.css",
   },
   build: {
-    transpile: ['@prisma/client'], 
+    transpile: ["@prisma/client"],
+  },
+  vite: {
+    resolve: {
+      alias: {
+        ".prisma/client/index-browser":
+          "./node_modules/.prisma/client/index-browser.js",
+      },
+    },
   },
   prisma: {
     autoSetupPrisma: true,
