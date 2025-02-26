@@ -3,14 +3,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
     "dev": "nuxt dev",
-    "prisma:generate": "npx prisma generate",
+    "build": "prisma generate && nuxt build",
     "generate": "nuxt generate",
     "preview": "npx nuxthub preview",
     "deploy": "npx nuxthub deploy",
-    "postinstall": "nuxt prepare",
-    "lint": "eslint ."
+    "postinstall": "nuxt prepare && prisma generate",
+    "lint": "eslint .",
+    "prisma:push": "npx prisma db push",
+    "prisma:studio": "npx prisma studio",
+    "prisma:generate": "npx prisma generate"
   },
   "dependencies": {
     "@nuxt/eslint": "^1.0.1",
@@ -20,6 +22,7 @@
     "@nuxtjs/cloudinary": "^4.0.0",
     "@nuxtjs/tailwindcss": "^6.13.1",
     "@pinia/nuxt": "^0.10.1",
+    "@prisma/client": "^6.4.1",
     "@prisma/nuxt": "^0.3.0",
     "@vee-validate/nuxt": "^4.15.0",
     "@vee-validate/zod": "^4.15.0",
@@ -47,6 +50,7 @@
     "@types/jsonwebtoken": "^9.0.9",
     "eslint": "^9.18.0",
     "nuxt-file-storage": "^0.2.9",
+    "prisma": "^6.4.1",
     "typescript": "^5.7.3",
     "vue-tsc": "^2.2.2",
     "wrangler": "^3.101.0"
