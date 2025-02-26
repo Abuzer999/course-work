@@ -23,6 +23,9 @@ export default defineNuxtConfig({
   tailwindcss: {
     cssPath: "~/assets/css/tailwind.css",
   },
+  build: {
+    transpile: ['@prisma/client'], 
+  },
   prisma: {
     autoSetupPrisma: true,
   },
