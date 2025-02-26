@@ -12,10 +12,7 @@
     "lint": "eslint .",
     "prisma:push": "npx prisma db push",
     "prisma:studio": "npx prisma studio",
-    "prisma:inline": "cp ./node_modules/.prisma/client/*.js ./node_modules/@prisma/client",
-    "prisma:migrate": "prisma migrate deploy && npm run prisma:inline",
-    "prisma:migrate:dev": "prisma migrate dev && npm run prisma:inline",
-    "prisma:generate": "prisma generate && npm run prisma:inline"
+    "prisma:generate": "npx prisma generate"
   },
   "dependencies": {
     "@nuxt/eslint": "^1.0.1",
