@@ -50,7 +50,6 @@ const addBasket = async (): Promise<void> => {
         quantity: 1,
       },
     });
-    console.log(response);
     inBasket.value = true;
   } catch (error: unknown) {
     if (error instanceof Error) {

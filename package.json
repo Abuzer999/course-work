@@ -27,6 +27,8 @@
     "@vueuse/core": "^12.7.0",
     "@vueuse/nuxt": "^12.7.0",
     "bcrypt": "^5.1.1",
+    "formidable": "^3.5.2",
+    "h3-formidable": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
     "nuxt": "^3.15.1",
     "nuxt-auth-utils": "^0.5.16",

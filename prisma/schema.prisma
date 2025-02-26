@@ -49,9 +49,9 @@ model Basket {
 
 model BasketItems {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  quantity  Int // Количество товара в корзине
-  productId String   @db.ObjectId // ID товара
-  cartId    String   @db.ObjectId // ID корзины
+  quantity  Int
+  productId String   @db.ObjectId
+  cartId    String   @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

@@ -53,7 +53,6 @@ useInfiniteScroll(
   async () => {
     offset.value += limit.value;
     await refresh();
-    console.log("offset", offset.value);
   },
   {
     distance: 100,

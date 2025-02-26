@@ -14,7 +14,6 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    // Чтение файлов через multipart/form-data
     const formData = await readMultipartFormData(event);
     const file = formData?.find((field) => field.name === "file");
 

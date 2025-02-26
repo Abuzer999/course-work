@@ -58,14 +58,12 @@ const addProduct = async (): Promise<void> => {
   const currentTime = Date.now();
 
   if (currentTime - lastActionTime < debounceDelay) {
-    console.log("Too fast! Try again later.");
     return;
   }
 
   lastActionTime = currentTime;
 
   if (quantity.value >= 100) {
-    console.error("Cannot add more than 100 items.");
     return;
   }
 
@@ -80,7 +78,6 @@ const addProduct = async (): Promise<void> => {
       body: { productId: props.productId, quantity: 1 },
     });
 
-    console.log(response);
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);
@@ -92,7 +89,6 @@ const removeProduct = async (): Promise<void> => {
   const currentTime = Date.now();
 
   if (currentTime - lastActionTime < debounceDelay) {
-    console.log("Too fast! Try again later.");
     return;
   }
 
@@ -112,8 +108,6 @@ const removeProduct = async (): Promise<void> => {
       method: "POST",
       body: { productId: props.productId, quantity: -1 },
     });
-
-    console.log(response);
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);
@@ -132,7 +126,6 @@ const deleteProduct = async (): Promise<void> => {
       method: "DELETE",
       body: { productId: props.productId },
     });
-    console.log(response);
     if (response) {
       quantity.value = 0;
     }

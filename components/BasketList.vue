@@ -42,7 +42,6 @@ const { data, error, status } = await useFetch<Basket>(
 const getBasketList = async () => {
   try {
     if (data.value) {
-      console.log(data.value);
       basketList.value = data.value.items;
       totalAmount.value = data.value.totalAmount;
     }

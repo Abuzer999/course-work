@@ -14,7 +14,6 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    // Получаем сессию пользователя
     const session = await getUserSession(event);
 
     if (!session || !session.user?.id) {
@@ -26,7 +25,6 @@ export default defineEventHandler(async (event) => {
 
     const userId = session.user.id;
 
-    // Ищем корзину пользователя
     const basket = await prisma.basket.findUnique({
       where: { userId },
       select: { id: true },
@@ -39,7 +37,6 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    // Ищем товар в корзине
     const existingBasketItem = await prisma.basketItems.findFirst({
       where: {
         cartId: basket.id,
@@ -54,12 +51,10 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    // Удаляем товар
     await prisma.basketItems.delete({
       where: { id: existingBasketItem.id },
     });
 
-    // Обновляем totalAmount корзины
     const totalAmount = await updateTotalAmount(basket.id);
 
     return { message: "Item removed from basket.", totalAmount };
