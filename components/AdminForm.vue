@@ -48,6 +48,8 @@ import { productSchema } from "~/validation/adminShema";
 
 const props = defineProps<{ openModal: boolean }>();
 
+
+
 const username = ref<string>("");
 const stock = ref<number>(0);
 const price = ref<number>(0);
@@ -61,28 +63,28 @@ const fields = reactive([
   {
     name: "name",
     label: "Product Name",
-    modelValue: username.value,
+    modelValue: username,
     type: "text",
     placeholder: "Enter product name",
   },
   {
     name: "description",
     label: "Description",
-    modelValue: description.value,
+    modelValue: description,
     type: "text",
     placeholder: "Enter product description",
   },
   {
     name: "price",
     label: "Price",
-    modelValue: price.value,
+    modelValue: price,
     type: "number",
     placeholder: "Enter price",
   },
   {
     name: "stock",
     label: "Stock",
-    modelValue: stock.value,
+    modelValue: stock,
     type: "number",
     placeholder: "Enter stock quantity",
   },
@@ -110,8 +112,8 @@ const onSubmit = async () => {
   formData.append("file", file.value);
   formData.append("name", username.value);
   formData.append("description", description.value);
-  formData.append("price", price.value);
-  formData.append("stock", stock.value);
+  formData.append("price", price.value.toString());
+  formData.append("stock", stock.value.toString());
 
   try {
     const response = await $fetch("/api/admin/product", {
@@ -123,6 +125,11 @@ const onSubmit = async () => {
 
     preview.value = null;
     file.value = null;
+    username.value = "";
+    description.value = "";
+    price.value = 0;
+    stock.value = 0;
+    
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);

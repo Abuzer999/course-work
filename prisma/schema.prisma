@@ -13,16 +13,17 @@ enum Role {
 }
 
 model User {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
   name       String
-  email      String   @unique
+  email      String    @unique
   password   String
-  role       Role     @default(user)
+  role       Role      @default(user)
   age        Int?
   profilePic String?
   basket     Basket?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  products   Product[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 model Product {
@@ -35,6 +36,9 @@ model Product {
   basketItems BasketItems[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+
+  createdById String @db.ObjectId
+  createdBy   User   @relation(fields: [createdById], references: [id])
 }
 
 model Basket {

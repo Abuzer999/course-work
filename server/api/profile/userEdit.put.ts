@@ -21,6 +21,7 @@ export default defineEventHandler(async (event) => {
         message: "User ID is required.",
       });
     }
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { name: true, email: true, age: true },
@@ -35,38 +36,61 @@ export default defineEventHandler(async (event) => {
 
     const body: IUser = await readBody(event);
 
-    switch (true) {
-      case body.name === user.name &&
-        body.email === user.email &&
-        body.age === user.age:
-        throw createError({ statusCode: 400, message: "No changes detected." });
+    if (
+      body.name === user.name &&
+      body.email === user.email &&
+      body.age === user.age
+    ) {
+      throw createError({ statusCode: 400, message: "No changes detected." });
+    }
 
-      case !body.name || body.name.trim().length < 2:
-        throw createError({
-          statusCode: 400,
-          message: "Name must be at least 1 character long.",
-        });
+    if (!body.name || body.name.trim().length < 2) {
+      throw createError({
+        statusCode: 400,
+        message: "Name must be at least 1 character long.",
+      });
+    }
 
-      case !body.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email):
-        throw createError({
-          statusCode: 400,
-          message: "Invalid email format.",
-        });
+    if (!body.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
+      throw createError({
+        statusCode: 400,
+        message: "Invalid email format.",
+      });
+    }
 
-      case !body.age || isNaN(body.age) || (body.age < 10 || body.age > 100):
-        throw createError({
-          statusCode: 400,
-          message: "Age must be a valid positive number between 10 and 100.",
-        });
+    if (!body.age || isNaN(body.age) || body.age < 10 || body.age > 100) {
+      throw createError({
+        statusCode: 400,
+        message: "Age must be a valid positive number between 10 and 100.",
+      });
+    }
+
+    const existingUserWithEmail = await prisma.user.findUnique({
+      where: { email: body.email },
+    });
+
+    if (existingUserWithEmail && existingUserWithEmail.id !== userId) {
+      throw createError({
+        statusCode: 400,
+        message: "Email is already in use.",
+      });
+    }
+
+
+    if (
+      body.name === user.name &&
+      body.email === user.email &&
+      body.age === user.age
+    ) {
+      throw createError({ statusCode: 400, message: "No changes detected." });
     }
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
         name: body.name ?? undefined,
-        email: body.email ?? undefined,
+        email: body.email !== user.email ? body.email : undefined,
         age: body.age ?? undefined,
-
       },
     });
 
@@ -77,7 +101,9 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    return updatedUser;
+    return {
+      updatedUser,
+    };
   } catch (error: any) {
     throw createError({
       statusCode: error.statusCode || 500,

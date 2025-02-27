@@ -91,6 +91,8 @@ const saveEdit = async (): Promise<void> => {
       body: dataUser.value,
     });
 
+    console.log(response);
+
     if (response) {
       messageSuccess.value = "Changes saved successfully.";
       setTimeout(() => {

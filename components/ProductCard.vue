@@ -1,9 +1,6 @@
 <template>
-  <div class="flex flex-col max-w-[230px] w-full">
-    <NuxtLink
-      :to="`/products/${id}`"
-      class="flex flex-col"
-    >
+  <div v-if="!deleteProd" class="relative flex flex-col max-w-[230px] w-full">
+    <NuxtLink :to="`/products/${id}`" class="flex flex-col">
       <div
         class="relative flex items-center justify-center w-full h-[230px] bg-[#f7f7f7]"
       >
@@ -29,7 +26,18 @@
       >
     </NuxtLink>
 
-    <buttonAddBasket :inBasket="inBasket" @click="loggedIn ? addBasket() : navigateTo('/auth')" class="mt-auto flex justify-center" />
+    <Icon
+      @click="deleteProduct"
+      v-if="$route.fullPath == '/admin'"
+      name="i-mdi-close"
+      class="absolute top-[10px] right-[10px] w-[30px] h-[30px] cursor-pointer"
+    />
+
+    <buttonAddBasket
+      :inBasket="inBasket"
+      @click="loggedIn ? addBasket() : navigateTo('/auth')"
+      class="mt-auto flex justify-center"
+    />
   </div>
 </template>
 
@@ -37,6 +45,7 @@
 const { loggedIn } = useUserSession();
 import type { IProduct } from "~/types/product";
 const props = defineProps<IProduct>();
+const deleteProd = ref<boolean>(false);
 
 const inBasket = ref(false);
 
@@ -51,6 +60,25 @@ const addBasket = async (): Promise<void> => {
       },
     });
     inBasket.value = true;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+};
+
+const deleteProduct = async (): Promise<void> => {
+  try {
+    const response = await $fetch('/api/admin/item', {
+      method: "DELETE",
+      body: {
+        productId: props.id,
+      },
+    });
+    
+    if (response) {
+      deleteProd.value = true;
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);

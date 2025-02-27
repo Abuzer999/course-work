@@ -2,7 +2,9 @@
   <div class="container">
     <p class="text-[20px] text-center">Role: Admin</p>
     <AdminCreateProduct v-model:openModal="openModal" />
-    <div class="border-t border-gray-200 mt-8 pt-8"></div>
+    <div class="border-t border-gray-200 mt-8 pt-8">
+      <AdminList />
+    </div>
   </div>
 
   <AdminForm :openModal="openModal" ref="modal" />
